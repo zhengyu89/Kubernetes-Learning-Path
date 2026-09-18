@@ -1,0 +1,44 @@
+---
+provider:
+  name: istio
+
+httpRoute:
+  create: true
+  inferenceGatewayName: llm-d-inference-gateway
+  inferenceGatewayNamespace: inference
+  requestTimeout: 300s
+
+router:
+  modelServers:
+    matchLabels:
+      app: vllm-gemma-270m
+
+    type: vllm
+    protocol: http
+
+    targetPorts:
+      - number: 8000
+
+  inferencePool:
+    create: true
+    failureMode: FailOpen
+
+  epp:
+    pluginsConfigFile: gemma-routing.yaml
+
+    pluginsConfig:
+      apiVersion: llm-d.ai/v1alpha1
+      kind: EndpointPickerConfig
+
+      plugins:
+        - type: queue-scorer
+        - type: kv-cache-utilization-scorer
+
+      schedulingProfiles:
+        - name: default
+          plugins:
+            - pluginRef: queue-scorer
+              weight: 2
+
+            - pluginRef: kv-cache-utilization-scorer
+              weight: 1

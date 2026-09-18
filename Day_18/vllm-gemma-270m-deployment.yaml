@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vllm-gemma-270m
+  name: vllm-gemma-270m
+  namespace: inference
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: vllm-gemma-270m
+
+  template:
+    metadata:
+      labels:
+        app: vllm-gemma-270m
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+
+    spec:
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+
+      containers:
+        - name: vllm-openai
+          image: vllm/vllm-openai:v0.29.0
+
+          args:
+            - "--model"
+            - "google/gemma-3-270m-it"
+            - "--gpu-memory-utilization"
+            - "0.25"                            # In practical, it should be set to 0.8 or higher
+            - "--max-model-len"                 # but we use lower value due to GPU time-slicing and sharing.
+            - "8192"
+
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: HUGGING_FACE_HUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: token
+
+          resources:
+            limits:
+              nvidia.com/gpu.shared: "1"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 60
+
+          volumeMounts:
+            - name: model-cache
+              mountPath: /root/.cache/huggingface
+
+      volumes:
+        - name: model-cache
+          emptyDir: {}

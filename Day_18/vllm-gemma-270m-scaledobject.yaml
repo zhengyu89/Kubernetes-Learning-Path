@@ -1,0 +1,31 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: vllm-gemma-270m
+  namespace: inference
+
+spec:
+  scaleTargetRef:
+    name: vllm-gemma-270m
+
+  minReplicaCount: 1
+  maxReplicaCount: 3
+
+  pollingInterval: 15
+  cooldownPeriod: 300
+
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: >-
+          http://prometheus-server.monitoring.svc:9090
+
+        query: |
+          sum(
+            vllm:num_requests_waiting{
+              namespace="inference"
+            }
+          )
+
+        threshold: "5"

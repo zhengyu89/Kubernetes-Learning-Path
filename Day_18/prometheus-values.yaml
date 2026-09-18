@@ -1,0 +1,32 @@
+---
+# Minimal Prometheus installation for the vLLM + KEDA lab.
+
+alertmanager:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
+
+server:
+  # Lab environment: don't require a StorageClass/PVC.
+  persistentVolume:
+    enabled: false
+
+  # We only need short-lived metrics for autoscaling/testing.
+  retention: "6h"
+
+  global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    evaluation_interval: 15s
+
+  service:
+    enabled: true
+    type: ClusterIP
+    servicePort: 9090

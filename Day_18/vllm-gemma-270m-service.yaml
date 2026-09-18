@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: vllm-gemma-270m
+  name: vllm-gemma-270m
+  namespace: inference
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: vllm-gemma-270m
+  type: ClusterIP
