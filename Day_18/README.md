@@ -1,6 +1,22 @@
-# Single-Cluster LLM Inference Architecture
-
+# DAY 18: Single-Cluster LLM Inference with llm-d and KEDA autoscaling
 ![Single-Cluster LLM Inference Architecture](assets/Single-Cluster%20LLM%20Inference%20Architecture.png)
+
+## Objective for today:
+
+1. Setup kubernetes on GPU cluster
+2. Deploy light-weight gemma-270m model on vllm in kubeadm
+3. Perform Nvidia GPU time-scaling to stimulate multiple GPU
+4. Setup and understand how llm-d handle inference gateway and intelligent routing
+5. Perform KEDA for llm pods auto-scaling
+
+## Explanation
+For today, we are going to deep dive on how to host LLM via vllm on GPUs. In AI factory, kubernetes comes as a handy tool on hosting LLM in production as its capability on changing workloads, manages GPU resources, and maintaining high availability. Hovewer, there are some difference compared to hosting applications in CPU.
+
+1. CPU is easy to specify resource needed as it able to divided naturally. Kubernetes can only see GPU as whole.
+2. Kubernetes does not understand concept of LLMs, and not able to scale the system by LLM's metrics such as VRam usage, KV cache usage, number of request waiting, prompt/output length etc.
+3. LLM loadbalancing is far more complex and not interchangeable between pods. KV-cache utilization, request queues and active LoRA adapter are not able to perform by native kubernetes. Load balancer should consider number of queue, KV cache, LoRA and VRAM usage to choose the best vllm replica.
+
+
 
 ## Prerequisites for clean VM
 
@@ -75,7 +91,7 @@ istioctl version --remote=false
 jq --version
 git --version
 curl --version
-hey --version
+hey -h
 ```
 
 The tools are used for:
@@ -139,11 +155,6 @@ helm upgrade --install prometheus \
   --create-namespace \
   -f prometheus-values.yaml
 
-helm upgrade --install prometheus \
-  prometheus-community/prometheus \
-  --namespace monitoring \
-  --create-namespace \
-  -f prometheus-values.yaml
 ```
 
 ## Secret Generate Command
@@ -151,11 +162,7 @@ helm upgrade --install prometheus \
 ```bash
 kubectl create secret generic hf-token \
   -n inference \
-  --from-literal=token='hf_your_token_here' \
-  --dry-run=client \
-  -o yaml > hf-token-secret.yaml
-
-kubectl apply -f hf-token-secret.yaml
+  --from-literal=token='hf_your_token_here'
 ```
 
 ## Install Gateway API +  Inference Estension CRDs
@@ -309,4 +316,4 @@ curl http://localhost:8080/v1/chat/completions \
 - https://aws.amazon.com/blogs/machine-learning/introducing-disaggregated-inference-on-aws-powered-by-llm-d/
 - https://llm-d.ai/docs/getting-started/quickstart
 
-Hardware used: Nvidia 4060 Ti
+Hardware used: Nvidia 3060

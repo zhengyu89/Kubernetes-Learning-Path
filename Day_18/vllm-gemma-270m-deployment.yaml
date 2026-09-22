@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vllm-gemma-270m
   name: vllm-gemma-270m
-  namespace: inference
+  namespace: inference1
 
 spec:
   replicas: 1
@@ -24,6 +24,7 @@ spec:
         prometheus.io/port: "8000"
 
     spec:
+      runtimeClassName: nvidia
       tolerations:
         - key: nvidia.com/gpu
           operator: Exists

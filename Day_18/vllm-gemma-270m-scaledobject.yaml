@@ -12,8 +12,9 @@ spec:
   minReplicaCount: 1
   maxReplicaCount: 3
 
-  pollingInterval: 15
-  cooldownPeriod: 300
+ # Optional: Useful only when minReplicaCount is set to 0.
+  # pollingInterval: 15
+  # cooldownPeriod: 300
 
   triggers:
     - type: prometheus

@@ -4,7 +4,7 @@ metadata:
   labels:
     app: vllm-gemma-270m
   name: vllm-gemma-270m
-  namespace: inference
+  namespace: inference1
 spec:
   ports:
   - name: http
