@@ -13,8 +13,9 @@ The references and hands-on lab materials used for today's learning are listed b
 
 ---
 
-## References and Lab Materials
+## Setup Guide
+[S](https://github.com/zhengyu89/Kubernetes-Learning-Path/blob/main/Day_20/Setup_Guide.md)
 
 ### Hands-On Labs
-
-* [Gateway CA Trust – Killercoda](https://killercoda.com/ivan-tan/scenario/gateway-ca-trust)
+[Install NGINX Gateway Fabric with Helm | NGINX Documentation](https://docs.nginx.com/nginx-gateway-fabric/install/helm/)
+[Annotated Gateway resource - cert-manager Documentation](https://cert-manager.io/docs/usage/gateway/?utm_source=chatgpt.com)
