@@ -13,8 +13,8 @@ The references and hands-on lab materials used for today's learning are listed b
 
 ---
 
-## Setup Guide
-[S](https://github.com/zhengyu89/Kubernetes-Learning-Path/blob/main/Day_20/Setup_Guide.md)
+## Hands-on lab
+[Gateway API + cert-manager Certificate Automation Lab](https://github.com/zhengyu89/Kubernetes-Learning-Path/blob/main/Day_20/Lab.md)
 
 ### Hands-On Labs
 [Install NGINX Gateway Fabric with Helm | NGINX Documentation](https://docs.nginx.com/nginx-gateway-fabric/install/helm/)
